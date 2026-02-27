@@ -5,7 +5,8 @@ Issue reporter for heurema products. Claude Code plugin.
 ## Install
 
 ```bash
-claude plugin install heurema/reporter
+claude plugin marketplace add heurema/emporium
+claude plugin install reporter@emporium
 ```
 
 ## Usage
