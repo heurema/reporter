@@ -4,10 +4,12 @@ Issue reporter for heurema products. Claude Code plugin.
 
 ## Install
 
+<!-- INSTALL:START — auto-synced from emporium/INSTALL_REFERENCE.md -->
 ```bash
 claude plugin marketplace add heurema/emporium
 claude plugin install reporter@emporium
 ```
+<!-- INSTALL:END -->
 
 ## Usage
 
