@@ -151,7 +151,7 @@ You run `/report` outside a heurema project directory. Reporter prompts:
 ```
 Which heurema product is this about?
 - proofpack
-- sigil
+- signum
 - anvil
 - herald
 - skill7.dev

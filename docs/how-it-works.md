@@ -43,7 +43,7 @@ Reporter runs three bash probes in order and stops at the first hit:
 2. **plugin.json** — searches up to 3 directory levels deep for `plugin.json` inside a `.claude-plugin/` directory and reads the `name` field via `python3 -c "import sys,json; ..."`.
 3. **pyproject.toml** — reads `project.name` via `python3 -c "import tomllib, pathlib; ..."`.
 
-If all three fail, Reporter prompts: "Which heurema product is this about?" and offers choices: proofpack, sigil, anvil, herald, skill7.dev, teams-field-guide, or Other.
+If all three fail, Reporter prompts: "Which heurema product is this about?" and offers choices: proofpack, signum, anvil, herald, skill7.dev, teams-field-guide, or Other.
 
 ### Step 2: Check `gh` availability
 

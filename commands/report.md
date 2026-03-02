@@ -40,7 +40,7 @@ The detected name IS the repo name (heurema repo names match product names).
 
 If still unknown, ask the user: "Which heurema product is this about?" and offer choices:
 - proofpack
-- sigil
+- signum
 - anvil
 - herald
 - skill7.dev
