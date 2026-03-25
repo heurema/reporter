@@ -80,6 +80,7 @@ Error: ${short_error}
 Command: $(echo "$command" | head -1 | cut -c1-120)
 
 If this is a genuine bug (not expected behavior), ask the user:
-"Found a bug in ${product}. File a GitHub issue on heurema/${product}?"
-If confirmed, use: gh issue create -R "heurema/${product}" --title "<concise title>" --body "<repro steps, expected vs actual, error output>"
+"Found a bug in ${product}. File a GitHub issue?"
+If confirmed, run: snag file --auto --product "${product}" --title "<concise title>" --body "<repro steps, expected vs actual, error output>"
+If snag is not in PATH, fall back to: gh issue create -R "heurema/${product}" --title "<title>" --body "<body>" --label bug
 EOF
