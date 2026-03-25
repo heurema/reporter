@@ -1,19 +1,21 @@
-# Reporter
-
-<div align="center">
-
-**File issues for heurema products without leaving Claude Code**
-
-![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-5b21b6?style=flat-square)
-![Version](https://img.shields.io/badge/version-0.1.0-5b21b6?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-5b21b6?style=flat-square)
-
-```bash
-claude plugin marketplace add heurema/emporium
-claude plugin install reporter@emporium
+```
+                               __
+   ________  ____  ____  _____/ /____  _____
+  / ___/ _ \/ __ \/ __ \/ ___/ __/ _ \/ ___/
+ / /  /  __/ /_/ / /_/ / /  / /_/  __/ /
+/_/   \___/ .___/\____/_/   \__/\___/_/
+         /_/
 ```
 
-</div>
+**File issues for heurema products without leaving Claude Code.**
+
+[![Claude Code Plugin](https://img.shields.io/badge/Claude%20Code-Plugin-5b21b6?style=flat-square)]()
+[![Version](https://img.shields.io/badge/version-0.1.0-5b21b6?style=flat-square)]()
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
+> Auto-detects the product, guides you through issue details, submits via `gh`.
+
+---
 
 ## What it does
 
