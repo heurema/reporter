@@ -8,6 +8,10 @@
 
 set -euo pipefail
 
+if ! command -v jq >/dev/null 2>&1; then
+  exit 0
+fi
+
 INPUT="$(cat)"
 
 tool_name="$(echo "$INPUT" | jq -r '.tool_name // empty' 2>/dev/null)" || true
