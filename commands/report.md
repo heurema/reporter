@@ -55,10 +55,14 @@ If still unknown, ask the user: "Which heurema product is this about?" and offer
 ## Step 2: Check gh CLI availability
 
 ```bash
-command -v gh >/dev/null 2>&1 && gh auth status 2>&1 | head -3 || echo "GH_UNAVAILABLE"
+if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+  echo "GH_READY"
+else
+  echo "GH_UNAVAILABLE"
+fi
 ```
 
-If output contains "GH_UNAVAILABLE" or "not logged in", note that gh is not available.
+If output is "GH_UNAVAILABLE", note that gh is not available.
 Continue collecting info — we'll use the fallback path at the end.
 
 ## Step 3: Ask the user what they want to report
