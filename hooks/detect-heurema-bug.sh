@@ -22,7 +22,7 @@ output="$(echo "$INPUT" | jq -r '.tool_output[:4000] // empty' 2>/dev/null)" || 
 
 # --- Detect heurema product ---
 
-PRODUCTS=(mycel nex jj-supersede watchdog-cli proofpack anvil herald skill7 reporter)
+PRODUCTS=(mycel nex jj-supersede watchdog-cli proofpack anvil herald signum delve reporter)
 product=""
 
 # Level 1: direct CLI invocation
