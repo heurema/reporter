@@ -15,7 +15,12 @@ create a well-structured GitHub issue with minimal friction.
 Run this in bash to detect the current repo:
 
 ```bash
-git remote get-url origin 2>/dev/null | sed 's|.*heurema/||; s|\.git$||'
+REMOTE_URL="$(git remote get-url origin 2>/dev/null)"
+if echo "$REMOTE_URL" | grep -q 'heurema[/:]'; then
+  echo "$REMOTE_URL" | sed 's|.*heurema[/:]||; s|\.git$||'
+else
+  echo ""
+fi
 ```
 
 Save the result as REPO_NAME. If empty or does not contain a heurema repo, try the plugin manifest:
