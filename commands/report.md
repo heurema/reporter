@@ -137,22 +137,22 @@ ISSUE_BODY
 RESULT="$(gh issue create -R "heurema/REPO_NAME" \
   --title "TITLE_HERE" \
   --body-file "$TMPFILE" \
-  --label "LABEL" 2>&1)" || true
+  --label "LABEL" 2>&1)" && CREATED=true || CREATED=false
 ```
 
-If the output contains a label-specific error (e.g. "label" or "not found"),
-retry without `--label`:
+If creation failed and the error is label-specific, retry without `--label`:
 
 ```bash
-if echo "$RESULT" | grep -qiE 'label.*not found|invalid label|label.*does not exist'; then
+if [ "$CREATED" = "false" ] && echo "$RESULT" | grep -qiE 'label.*not found|invalid label|label.*does not exist'; then
   RESULT="$(gh issue create -R "heurema/REPO_NAME" \
     --title "TITLE_HERE" \
-    --body-file "$TMPFILE" 2>&1)"
+    --body-file "$TMPFILE" 2>&1)" && CREATED=true || CREATED=false
 fi
-echo "$RESULT"
 ```
 
-Report the issue URL to the user.
+Check the result and report to the user:
+- If `CREATED=true` and `RESULT` contains a GitHub issue URL: report the URL.
+- If `CREATED=false`: show the error from `RESULT` and offer the clipboard fallback path.
 
 **If gh is NOT available:**
 
