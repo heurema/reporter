@@ -72,7 +72,7 @@ fi
 # --- Emit agent instruction ---
 
 # Extract short error (first 3 non-empty stderr lines)
-short_error="$(echo "$output" | grep -iE 'error|panic|fatal|failed' | head -3)"
+short_error="$(echo "$output" | grep -iE 'error|panic|fatal|failed' | head -3 || true)"
 
 cat <<EOF
 [auto-report] Detected failure in heurema/${product}.
