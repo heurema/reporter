@@ -15,7 +15,12 @@ create a well-structured GitHub issue with minimal friction.
 Run this in bash to detect the current repo:
 
 ```bash
-git remote get-url origin 2>/dev/null | sed 's|.*heurema/||; s|\.git$||'
+REMOTE_URL="$(git remote get-url origin 2>/dev/null)"
+if echo "$REMOTE_URL" | grep -qE '(github\.com[/:]|^)heurema/'; then
+  echo "$REMOTE_URL" | sed 's|.*heurema/||; s|\.git$||'
+else
+  echo ""
+fi
 ```
 
 Save the result as REPO_NAME. If empty or does not contain a heurema repo, try the plugin manifest:
@@ -39,10 +44,16 @@ if p.exists():
 The detected name IS the repo name (heurema repo names match product names).
 
 If still unknown, ask the user: "Which heurema product is this about?" and offer choices:
+- mycel
+- nex
+- jj-supersede
+- watchdog-cli
 - proofpack
 - signum
+- delve
 - anvil
 - herald
+- reporter
 - skill7.dev
 - teams-field-guide
 - Other (let them type)
@@ -50,10 +61,14 @@ If still unknown, ask the user: "Which heurema product is this about?" and offer
 ## Step 2: Check gh CLI availability
 
 ```bash
-command -v gh >/dev/null 2>&1 && gh auth status 2>&1 | head -3 || echo "GH_UNAVAILABLE"
+if command -v gh >/dev/null 2>&1 && gh auth status >/dev/null 2>&1; then
+  echo "GH_READY"
+else
+  echo "GH_UNAVAILABLE"
+fi
 ```
 
-If output contains "GH_UNAVAILABLE" or "not logged in", note that gh is not available.
+If output is "GH_UNAVAILABLE", note that gh is not available.
 Continue collecting info — we'll use the fallback path at the end.
 
 ## Step 3: Ask the user what they want to report
@@ -101,8 +116,8 @@ echo "Claude Code: $(claude --version 2>/dev/null || echo 'unknown')"
 Compose the issue in markdown matching the org template structure. Include an
 "## Environment" section at the bottom with the auto-collected info.
 
-Show the formatted title and body to the user and ask:
-"Here's the issue that will be created. Look good?"
+Show the destination repository, formatted title, and body to the user and ask:
+"Here's the issue that will be created in **heurema/REPO_NAME**. Look good?"
 
 Offer choices:
 - **Submit** — Create the issue
@@ -128,33 +143,41 @@ TMPFILE=$(mktemp)
 cat > "$TMPFILE" <<'ISSUE_BODY'
 <the formatted body goes here>
 ISSUE_BODY
-gh issue create -R "heurema/REPO_NAME" \
+
+RESULT="$(gh issue create -R "heurema/REPO_NAME" \
   --title "TITLE_HERE" \
   --body-file "$TMPFILE" \
-  --label "LABEL" 2>&1 || echo "LABEL_FAILED"
+  --label "LABEL" 2>&1)" && CREATED=true || CREATED=false
+
+# Retry without label if it was a label-specific error
+if [ "$CREATED" = "false" ] && echo "$RESULT" | grep -qiE 'label.*not found|invalid label|label.*does not exist'; then
+  RESULT="$(gh issue create -R "heurema/REPO_NAME" \
+    --title "TITLE_HERE" \
+    --body-file "$TMPFILE" 2>&1)" && CREATED=true || CREATED=false
+fi
+
 rm -f "$TMPFILE"
+echo "CREATED=$CREATED"
+echo "$RESULT"
 ```
 
-If the command fails with a label error (output contains "LABEL_FAILED" or "label"),
-retry without `--label`:
-
-```bash
-gh issue create -R "heurema/REPO_NAME" \
-  --title "TITLE_HERE" \
-  --body-file "$TMPFILE"
-```
-
-Report the issue URL to the user.
+Check the result and report to the user:
+- If `CREATED=true` and `RESULT` contains a GitHub issue URL: report the URL.
+- If `CREATED=false`: show the error from `RESULT` and offer the clipboard fallback path (rewrite the body to a new temp file for clipboard use).
 
 **If gh is NOT available:**
 
-1. Write the body to a temp file and copy to clipboard:
+1. Write the body to a temp file and try to copy to clipboard:
    ```bash
    TMPFILE=$(mktemp)
    cat > "$TMPFILE" <<'ISSUE_BODY'
    <the formatted body>
    ISSUE_BODY
-   cat "$TMPFILE" | pbcopy 2>/dev/null || cat "$TMPFILE" | xclip -selection clipboard 2>/dev/null || cat "$TMPFILE" | xsel --clipboard 2>/dev/null || echo "Could not copy to clipboard. Body saved to: $TMPFILE"
+   COPIED=false
+   if cat "$TMPFILE" | pbcopy 2>/dev/null; then COPIED=true
+   elif cat "$TMPFILE" | xclip -selection clipboard 2>/dev/null; then COPIED=true
+   elif cat "$TMPFILE" | xsel --clipboard 2>/dev/null; then COPIED=true
+   fi
    ```
 
 2. Print the correct URL based on type:
@@ -162,7 +185,12 @@ Report the issue URL to the user.
    - Feature Request: `https://github.com/heurema/REPO_NAME/issues/new?template=feature_request.md`
    - Question: `https://github.com/heurema/REPO_NAME/issues/new?template=question.md`
 
-3. Tell the user: "Issue body copied to clipboard. Open the link above and paste."
+3. Tell the user the result:
+   - If `COPIED=true`: "Issue body copied to clipboard. Open the link above and paste."
+   - If `COPIED=false`: "Could not copy to clipboard. Issue body saved to: $TMPFILE — copy it manually and paste at the link above."
+     (Do NOT delete the temp file in this case — it's the user's only copy.)
+
+4. If clipboard copy succeeded, clean up: `rm -f "$TMPFILE"`
 
 ## Rules
 
@@ -170,4 +198,4 @@ Report the issue URL to the user.
 - NEVER submit without user confirmation (Step 6).
 - If any bash command fails, skip it gracefully — don't block the flow.
 - Don't ask for information you can auto-detect.
-- Always clean up temp files.
+- Clean up temp files after successful submission or clipboard copy. Keep the temp file only when clipboard copy fails and it is the user's only copy.
