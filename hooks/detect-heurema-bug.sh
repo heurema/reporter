@@ -75,10 +75,10 @@ fi
 
 # --- Emit agent instruction ---
 
-# Extract short error (first 3 non-empty stderr lines)
-short_error="$(echo "$output" | grep -iE 'error|panic|fatal|failed' | head -3 || true)"
+# Extract short error (first 3 non-empty stderr lines), sanitize backticks
+short_error="$(echo "$output" | grep -iE 'error|panic|fatal|failed' | head -3 | tr '`' "'" || true)"
 
-safe_command="$(echo "$command" | head -1 | cut -c1-120)"
+safe_command="$(echo "$command" | head -1 | cut -c1-120 | tr '`' "'")"
 cat <<EOF
 [auto-report] Detected failure in heurema/${product}.
 
@@ -91,7 +91,5 @@ Command: ${safe_command}
 \`\`\`
 
 If this is a genuine bug (not expected behavior), ask the user:
-"Found a bug in ${product}. File a GitHub issue?"
-If confirmed, run: snag file --auto --product "${product}" --title "<concise title>" --body "<repro steps, expected vs actual, error output>"
-If snag is not in PATH, fall back to: gh issue create -R "heurema/${product}" --title "<title>" --body "<body>" --label bug
+"Found a bug in ${product}. File a GitHub issue via /report bug?"
 EOF
