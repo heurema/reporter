@@ -16,8 +16,8 @@ Run this in bash to detect the current repo:
 
 ```bash
 REMOTE_URL="$(git remote get-url origin 2>/dev/null)"
-if echo "$REMOTE_URL" | grep -q 'heurema[/:]'; then
-  echo "$REMOTE_URL" | sed 's|.*heurema[/:]||; s|\.git$||'
+if echo "$REMOTE_URL" | grep -qE '(github\.com[/:]|^)heurema/'; then
+  echo "$REMOTE_URL" | sed 's|.*heurema/||; s|\.git$||'
 else
   echo ""
 fi
