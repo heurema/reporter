@@ -110,8 +110,8 @@ echo "Claude Code: $(claude --version 2>/dev/null || echo 'unknown')"
 Compose the issue in markdown matching the org template structure. Include an
 "## Environment" section at the bottom with the auto-collected info.
 
-Show the formatted title and body to the user and ask:
-"Here's the issue that will be created. Look good?"
+Show the destination repository, formatted title, and body to the user and ask:
+"Here's the issue that will be created in **heurema/REPO_NAME**. Look good?"
 
 Offer choices:
 - **Submit** — Create the issue
