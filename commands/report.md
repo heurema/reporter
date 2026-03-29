@@ -151,13 +151,17 @@ Report the issue URL to the user.
 
 **If gh is NOT available:**
 
-1. Write the body to a temp file and copy to clipboard:
+1. Write the body to a temp file and try to copy to clipboard:
    ```bash
    TMPFILE=$(mktemp)
    cat > "$TMPFILE" <<'ISSUE_BODY'
    <the formatted body>
    ISSUE_BODY
-   cat "$TMPFILE" | pbcopy 2>/dev/null || cat "$TMPFILE" | xclip -selection clipboard 2>/dev/null || cat "$TMPFILE" | xsel --clipboard 2>/dev/null || echo "Could not copy to clipboard. Body saved to: $TMPFILE"
+   COPIED=false
+   if cat "$TMPFILE" | pbcopy 2>/dev/null; then COPIED=true
+   elif cat "$TMPFILE" | xclip -selection clipboard 2>/dev/null; then COPIED=true
+   elif cat "$TMPFILE" | xsel --clipboard 2>/dev/null; then COPIED=true
+   fi
    ```
 
 2. Print the correct URL based on type:
@@ -165,7 +169,12 @@ Report the issue URL to the user.
    - Feature Request: `https://github.com/heurema/REPO_NAME/issues/new?template=feature_request.md`
    - Question: `https://github.com/heurema/REPO_NAME/issues/new?template=question.md`
 
-3. Tell the user: "Issue body copied to clipboard. Open the link above and paste."
+3. Tell the user the result:
+   - If `COPIED=true`: "Issue body copied to clipboard. Open the link above and paste."
+   - If `COPIED=false`: "Could not copy to clipboard. Issue body saved to: $TMPFILE — copy it manually and paste at the link above."
+     (Do NOT delete the temp file in this case — it's the user's only copy.)
+
+4. If clipboard copy succeeded, clean up: `rm -f "$TMPFILE"`
 
 ## Rules
 
