@@ -1,7 +1,7 @@
 {
   "name": "reporter",
   "description": "Report bugs, request features, and ask questions for any heurema product. Auto-collects environment context and submits GitHub issues.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "author": {
     "name": "heurema"
   },
