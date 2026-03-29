@@ -125,23 +125,26 @@ Write the issue body to a temp file to avoid shell quoting issues:
 
 ```bash
 TMPFILE=$(mktemp)
+trap 'rm -f "$TMPFILE"' EXIT
 cat > "$TMPFILE" <<'ISSUE_BODY'
 <the formatted body goes here>
 ISSUE_BODY
-gh issue create -R "heurema/REPO_NAME" \
+RESULT="$(gh issue create -R "heurema/REPO_NAME" \
   --title "TITLE_HERE" \
   --body-file "$TMPFILE" \
-  --label "LABEL" 2>&1 || echo "LABEL_FAILED"
-rm -f "$TMPFILE"
+  --label "LABEL" 2>&1)" || true
 ```
 
-If the command fails with a label error (output contains "LABEL_FAILED" or "label"),
+If the output contains a label-specific error (e.g. "label" or "not found"),
 retry without `--label`:
 
 ```bash
-gh issue create -R "heurema/REPO_NAME" \
-  --title "TITLE_HERE" \
-  --body-file "$TMPFILE"
+if echo "$RESULT" | grep -qiE 'label.*not found|invalid label|label.*does not exist'; then
+  RESULT="$(gh issue create -R "heurema/REPO_NAME" \
+    --title "TITLE_HERE" \
+    --body-file "$TMPFILE" 2>&1)"
+fi
+echo "$RESULT"
 ```
 
 Report the issue URL to the user.
