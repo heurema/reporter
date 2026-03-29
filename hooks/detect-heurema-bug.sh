@@ -22,7 +22,7 @@ output="$(echo "$INPUT" | jq -r '.tool_output[:4000] // empty' 2>/dev/null)" || 
 
 # --- Detect heurema product ---
 
-PRODUCTS=(mycel nex jj-supersede watchdog-cli)
+PRODUCTS=(mycel nex jj-supersede watchdog-cli proofpack anvil herald skill7 reporter)
 product=""
 
 # Level 1: direct CLI invocation
@@ -35,7 +35,7 @@ done
 
 # Level 2: plugin workflow artifacts (.signum/, .delve/, etc.)
 if [ -z "$product" ]; then
-  for p in signum delve; do
+  for p in signum delve proofpack anvil herald; do
     if echo "$command" | grep -qE "\.${p}/" 2>/dev/null; then
       product="$p"
       break
