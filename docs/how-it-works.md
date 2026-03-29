@@ -1,6 +1,6 @@
 # How Reporter Works
 
-Reporter is a single-command Claude Code plugin. It has no agents, no skills, no hook scripts, and no background processes. The entire workflow — product detection, interactive collection, environment capture, preview, and submission — is orchestrated by the LLM driving the `/report` command, using `Bash` and `Read` tool calls as needed.
+Reporter is a Claude Code plugin with a single command and one optional hook. The `/report` workflow — product detection, interactive collection, environment capture, preview, and submission — is orchestrated by the LLM using `Bash` and `Read` tool calls. A `PostToolUse` hook (`hooks/detect-heurema-bug.sh`) passively monitors Bash tool output for heurema CLI failures and prompts the user to file an issue when one is detected.
 
 ## Architecture
 
@@ -23,8 +23,9 @@ All state is in-memory for the duration of the session. The only file written to
 | Component | File | Purpose |
 |-----------|------|---------|
 | Command definition | `commands/report.md` | Full workflow: detection, collection, formatting, submission |
+| PostToolUse hook | `hooks/detect-heurema-bug.sh` | Detects heurema CLI failures in Bash output, prompts to file issue |
 
-Reporter has a single component. There are no separate agent files, skill files, or hook files.
+The hook reads tool name, input, and truncated output from stdin (JSON via `jq`). It only fires for Bash calls that invoke known heurema products and only when an error indicator is found. Output is injected as agent feedback.
 
 The command is triggered by the slash command `/report` and also by natural-language phrases: "report a bug", "file an issue", "report issue". It accepts an optional argument (`bug`, `feature`, `question`) that sets the issue type without prompting.
 
