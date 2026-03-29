@@ -134,29 +134,30 @@ Write the issue body to a temp file to avoid shell quoting issues:
 
 ```bash
 TMPFILE=$(mktemp)
-trap 'rm -f "$TMPFILE"' EXIT
 cat > "$TMPFILE" <<'ISSUE_BODY'
 <the formatted body goes here>
 ISSUE_BODY
+
 RESULT="$(gh issue create -R "heurema/REPO_NAME" \
   --title "TITLE_HERE" \
   --body-file "$TMPFILE" \
   --label "LABEL" 2>&1)" && CREATED=true || CREATED=false
-```
 
-If creation failed and the error is label-specific, retry without `--label`:
-
-```bash
+# Retry without label if it was a label-specific error
 if [ "$CREATED" = "false" ] && echo "$RESULT" | grep -qiE 'label.*not found|invalid label|label.*does not exist'; then
   RESULT="$(gh issue create -R "heurema/REPO_NAME" \
     --title "TITLE_HERE" \
     --body-file "$TMPFILE" 2>&1)" && CREATED=true || CREATED=false
 fi
+
+rm -f "$TMPFILE"
+echo "CREATED=$CREATED"
+echo "$RESULT"
 ```
 
 Check the result and report to the user:
 - If `CREATED=true` and `RESULT` contains a GitHub issue URL: report the URL.
-- If `CREATED=false`: show the error from `RESULT` and offer the clipboard fallback path.
+- If `CREATED=false`: show the error from `RESULT` and offer the clipboard fallback path (rewrite the body to a new temp file for clipboard use).
 
 **If gh is NOT available:**
 
