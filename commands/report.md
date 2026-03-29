@@ -44,10 +44,16 @@ if p.exists():
 The detected name IS the repo name (heurema repo names match product names).
 
 If still unknown, ask the user: "Which heurema product is this about?" and offer choices:
+- mycel
+- nex
+- jj-supersede
+- watchdog-cli
 - proofpack
 - signum
+- delve
 - anvil
 - herald
+- reporter
 - skill7.dev
 - teams-field-guide
 - Other (let them type)
@@ -192,4 +198,4 @@ Check the result and report to the user:
 - NEVER submit without user confirmation (Step 6).
 - If any bash command fails, skip it gracefully — don't block the flow.
 - Don't ask for information you can auto-detect.
-- Always clean up temp files.
+- Clean up temp files after successful submission or clipboard copy. Keep the temp file only when clipboard copy fails and it is the user's only copy.
